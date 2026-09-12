@@ -3,132 +3,124 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>bcode — UI preview (faithful mockup of the built clients)</title>
+<title>bcode — UI preview v2 (AerosGeotech language)</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #060606;
+    --surface: #0c0c0d;
+    --card: #111113;
+    --line: #26262a;
+    --txt: #f2f2f0;
+    --mut: #9a9aa0;
+    --amber: #e8b93e;
+    --ok: #34d399;
+    --err: #f87171;
+  }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    background: #101623; color: #e8eef7; line-height: 1.5;
+    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    background: #101013; color: var(--txt); line-height: 1.5;
     min-height: 100vh; display: flex; flex-direction: column; align-items: center;
     padding: 28px 16px 60px;
   }
-  .page-title { font-size: 20px; font-weight: 700; letter-spacing: .2px; }
-  .page-sub { color: #8b98ad; font-size: 13px; margin: 4px 0 22px; }
+  .page-title { font-size: 17px; font-weight: 700; letter-spacing: 2px; }
+  .page-sub { color: var(--mut); font-size: 12px; margin: 6px 0 24px; letter-spacing: .4px; }
   .frames { display: flex; gap: 28px; flex-wrap: wrap; justify-content: center; }
-  /* phone frame */
   .phone {
-    width: 340px; height: 720px; background: #05070d;
-    border: 1px solid rgba(140,190,255,.16); border-radius: 44px;
-    padding: 12px; box-shadow: 0 30px 80px rgba(0,0,0,.55), 0 0 60px rgba(56,225,255,.06);
+    width: 340px; height: 720px; background: #000;
+    border: 1px solid #333336; border-radius: 44px; padding: 12px;
+    box-shadow: 0 30px 80px rgba(0,0,0,.6);
   }
   .screen {
-    width: 100%; height: 100%; background: #05070d; border-radius: 34px; overflow: hidden;
+    width: 100%; height: 100%; background: var(--bg); border-radius: 32px; overflow: hidden;
     display: flex; flex-direction: column; position: relative;
   }
   .notch {
     position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
     width: 110px; height: 26px; background: #000; border-radius: 14px; z-index: 5;
   }
-  .caption { text-align: center; color: #8b98ad; font-size: 13px; margin-top: 12px; max-width: 320px; }
-  .caption b { color: #e8eef7; font-weight: 600; }
-  /* ---- bcode UI (mirrors android/src/bcode.css tokens) ---- */
-  .bc { display: flex; flex-direction: column; height: 100%; font-size: 14px; }
-  .bc-head {
-    padding: 44px 14px 10px; background: #0a0f1c;
-    border-bottom: 1px solid rgba(140,190,255,.14);
-    display: flex; align-items: center; gap: 10px;
-  }
-  .bc-logo {
-    width: 30px; height: 30px; border-radius: 9px; flex: none;
-    background: linear-gradient(135deg, #38e1ff, #8b7bff);
+  .caption { text-align: left; color: var(--mut); font-size: 12px; margin-top: 12px; max-width: 320px; }
+  .caption b { color: var(--txt); }
+  /* ---- bcode v2 ---- */
+  .bc { display: flex; flex-direction: column; height: 100%; font-size: 13px; }
+  .bc-head { padding: 46px 14px 10px; background: var(--surface); border-bottom: 1px solid var(--line); }
+  .bc-row1 { display: flex; align-items: center; gap: 9px; }
+  .bc-mark {
+    width: 22px; height: 22px; background: var(--amber); color: #000;
     display: flex; align-items: center; justify-content: center;
-    font-weight: 800; font-size: 17px; color: #04121a;
+    font-weight: 700; font-size: 14px; flex: none;
   }
-  .bc-name { font-weight: 700; font-size: 16px; }
-  .bc-dot { width: 8px; height: 8px; border-radius: 4px; background: #3ddc84; box-shadow: 0 0 8px #3ddc84; }
-  .bc-status { color: #8b98ad; font-size: 12px; }
-  .bc-tabs { display: flex; gap: 8px; padding: 10px 14px 2px; }
+  .bc-name { font-weight: 700; font-size: 15px; letter-spacing: 3px; }
+  .bc-ver { color: var(--mut); font-size: 11px; margin-left: auto; }
+  .bc-status { display: flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 11px; letter-spacing: 1.5px; color: var(--mut); }
+  .bc-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 7px var(--ok); }
+  .bc-dot.busy { background: var(--amber); box-shadow: 0 0 7px var(--amber); }
+  .bc-tabs { display: flex; gap: 18px; padding: 12px 14px 0; border-bottom: 1px solid var(--line); }
   .bc-tab {
-    padding: 7px 14px; border-radius: 999px; font-size: 13px; font-weight: 600;
-    border: 1px solid rgba(140,190,255,.14); color: #8b98ad; cursor: pointer;
+    padding: 0 1px 9px; font-size: 11.5px; font-weight: 700; letter-spacing: 1.5px;
+    color: var(--mut); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px;
   }
-  .bc-tab.on { color: #38e1ff; border-color: #38e1ff; background: rgba(56,225,255,.12); }
-  .bc-body { flex: 1; overflow: hidden; padding: 8px 14px 12px; display: flex; flex-direction: column; gap: 8px; }
-  .bc-scroll { flex: 1; overflow: hidden; display: flex; flex-direction: column; gap: 8px; }
-  .msg {
-    max-width: 82%; padding: 10px 12px; border-radius: 14px; font-size: 13.5px;
-    white-space: pre-wrap; word-break: break-word;
+  .bc-tab.on { color: var(--amber); border-bottom-color: var(--amber); }
+  .bc-body { flex: 1; overflow: hidden; padding: 12px 14px; display: flex; flex-direction: column; }
+  .bc-scroll { flex: 1; overflow: hidden; display: flex; flex-direction: column; gap: 12px; }
+  .u {
+    align-self: flex-end; max-width: 85%; background: var(--card);
+    border: 1px solid #33363c; padding: 9px 11px; white-space: pre-wrap; word-break: break-word;
   }
-  .msg.a {
-    align-self: flex-start; background: #0c1322;
-    border: 1px solid rgba(140,190,255,.14);
-    box-shadow: 0 2px 18px rgba(56,225,255,.12);
-  }
-  .msg.u { align-self: flex-end; background: #38e1ff; color: #04121a; font-weight: 500; }
-  .msg.live { border-color: #38e1ff; }
-  .live-caret { display: inline-block; width: 8px; animation: blink 1s steps(1) infinite; color: #38e1ff; }
+  .a { align-self: flex-start; width: 100%; color: var(--txt); white-space: pre-wrap; word-break: break-word; }
+  .a .who { color: var(--mut); font-size: 10.5px; letter-spacing: 1.5px; margin-bottom: 3px; }
+  .a.live { border-left: 2px solid var(--amber); padding-left: 10px; }
+  .caret { display: inline-block; width: 8px; animation: blink 1s steps(1) infinite; color: var(--amber); }
   @keyframes blink { 50% { opacity: 0; } }
-  .perm {
-    align-self: flex-start; width: 88%; background: #0c1322;
-    border: 1px solid #e8b93e; border-radius: 14px; padding: 12px;
-  }
-  .perm-k { font-size: 11.5px; color: #e8b93e; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; }
-  .perm-t { font-weight: 700; margin: 4px 0 2px; font-size: 14px; }
-  .perm-d { color: #aab6c8; font-size: 13px; }
-  .perm-d code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; color: #e8eef7; }
-  .perm-btns { display: flex; gap: 8px; margin-top: 10px; }
-  .perm-btns button {
-    flex: 1; padding: 9px 0; border-radius: 10px; font-weight: 700; font-size: 13.5px; cursor: pointer;
-  }
-  .allow { background: #3ddc84; border: 1px solid #3ddc84; color: #04121a; }
-  .deny { background: transparent; border: 1px solid #ff5d5d; color: #ff5d5d; }
-  .work { align-self: flex-start; color: #8b98ad; font-size: 12.5px; }
-  .composer {
-    border-top: 1px solid rgba(140,190,255,.14); padding: 8px 14px 20px;
-    display: flex; gap: 8px; align-items: flex-end;
-  }
+  .perm { align-self: flex-start; width: 100%; background: var(--card); border: 1px solid var(--amber); padding: 11px 12px; }
+  .perm-k { font-size: 10.5px; color: var(--amber); font-weight: 700; letter-spacing: 2px; }
+  .perm-t { font-weight: 700; margin: 5px 0 2px; }
+  .perm-d { color: var(--mut); font-size: 12px; }
+  .perm-d code { color: var(--txt); font-size: 12px; }
+  .perm-btns { display: flex; gap: 8px; margin-top: 11px; }
+  .perm-btns button { flex: 1; padding: 9px 0; font-weight: 700; font-size: 12px; letter-spacing: 1.5px; cursor: pointer; font-family: inherit; }
+  .allow { background: var(--amber); border: 1px solid var(--amber); color: #000; }
+  .deny { background: transparent; border: 1px solid #4a4a4e; color: var(--txt); }
+  .composer { border-top: 1px solid var(--line); padding: 10px 14px 22px; display: flex; gap: 8px; }
   .box {
-    flex: 1; background: #0a0f1c; border: 1px solid rgba(140,190,255,.14);
-    border-radius: 12px; padding: 10px 12px; color: #8b98ad; font-size: 13.5px;
+    flex: 1; background: #0a0a0b; border: 1px solid var(--line);
+    padding: 10px 11px; color: var(--mut); font-size: 12.5px;
   }
   .sendbtn {
-    width: 44px; height: 44px; border-radius: 22px; background: #38e1ff; color: #04121a;
-    display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; flex: none;
+    width: 42px; height: 42px; flex: none; background: transparent;
+    border: 1px solid var(--amber); color: var(--amber);
+    display: flex; align-items: center; justify-content: center; font-size: 16px;
   }
-  .sendbtn.stop { background: #ff5d5d; color: #fff; font-size: 14px; }
+  .sendbtn.stop { border-color: var(--err); color: var(--err); font-size: 12px; }
   /* sessions */
   .newsess {
-    margin: 4px 0; padding: 11px; text-align: center; border-radius: 12px;
-    border: 1px solid #38e1ff; color: #38e1ff; font-weight: 600; font-size: 14px;
-    background: rgba(56,225,255,.07); cursor: pointer;
+    padding: 11px; text-align: center; border: 1px solid var(--amber); color: var(--amber);
+    font-weight: 700; font-size: 12px; letter-spacing: 1.5px; cursor: pointer; background: transparent;
   }
-  .sess {
-    background: #0c1322; border: 1px solid rgba(140,190,255,.14); border-radius: 12px;
-    padding: 11px 12px; display: flex; align-items: center; gap: 8px; cursor: pointer;
-  }
-  .sess.active { border-color: #38e1ff; background: rgba(56,225,255,.07); }
-  .sess .t { font-weight: 600; font-size: 13.5px; }
-  .sess .m { color: #8b98ad; font-size: 12px; }
-  .sess .del { margin-left: auto; color: #ff5d5d; font-size: 16px; padding: 6px; }
+  .sess { border-bottom: 1px solid var(--line); padding: 11px 10px; display: flex; gap: 10px; align-items: center; cursor: pointer; }
+  .sess .bar { width: 2px; align-self: stretch; background: transparent; flex: none; }
+  .sess.active .bar { background: var(--amber); }
+  .sess .t { font-weight: 700; font-size: 12.5px; }
+  .sess .m { color: var(--mut); font-size: 11px; margin-top: 2px; }
+  .sess .tag { margin-left: auto; font-size: 10px; letter-spacing: 1.5px; color: var(--amber); border: 1px solid var(--amber); padding: 2px 6px; flex: none; }
+  .sess .del { color: var(--mut); font-size: 14px; padding: 6px; flex: none; }
   /* settings */
-  .fld label { display: block; color: #8b98ad; font-size: 12px; margin: 10px 0 5px; }
+  .fld label { display: block; color: var(--mut); font-size: 10.5px; letter-spacing: 1.5px; margin: 12px 0 5px; }
   .fld .in {
-    background: #0a0f1c; border: 1px solid rgba(140,190,255,.14); border-radius: 10px;
-    padding: 11px 12px; font-size: 13.5px; color: #e8eef7;
-    font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px;
+    background: #0a0a0b; border: 1px solid var(--line);
+    padding: 10px 11px; font-size: 12.5px; color: var(--txt); font-family: inherit;
   }
   .save {
-    margin-top: 14px; padding: 13px; text-align: center; border-radius: 12px;
-    background: #38e1ff; color: #04121a; font-weight: 700; cursor: pointer;
+    margin-top: 16px; padding: 12px; text-align: center;
+    background: var(--amber); color: #000; font-weight: 700; font-size: 12.5px; letter-spacing: 1.5px; cursor: pointer;
   }
-  .note { color: #8b98ad; font-size: 12px; margin-top: 10px; }
-  .err { color: #ff5d5d; font-size: 12.5px; }
+  .note { color: var(--mut); font-size: 11px; margin-top: 12px; }
+  .errline { color: var(--err); font-size: 11.5px; }
 </style>
 </head>
 <body>
-  <div class="page-title">bcode client — UI preview</div>
-  <div class="page-sub">Faithful mockup of what we built · always-dark · same tokens on Acode + Flutter</div>
+  <div class="page-title">BCODE // UI PREVIEW V2</div>
+  <div class="page-sub">monochrome + single amber accent · mono type · sharp edges — the AerosGeotech language</div>
   <div class="frames">
 
     <!-- FRAME 1: CHAT -->
@@ -136,27 +128,25 @@
       <div class="phone"><div class="screen"><div class="notch"></div>
         <div class="bc">
           <div class="bc-head">
-            <div class="bc-logo">ϟ</div><div class="bc-name">bcode</div>
-            <div class="bc-dot"></div><div class="bc-status">online</div>
+            <div class="bc-row1"><div class="bc-mark">ϟ</div><div class="bc-name">BCODE</div><div class="bc-ver">v0.1</div></div>
+            <div class="bc-status"><div class="bc-dot busy"></div>WORKING — session abc123</div>
           </div>
-          <div class="bc-tabs">
-            <div class="bc-tab on">Chat</div><div class="bc-tab">Sessions</div><div class="bc-tab">Settings</div>
-          </div>
+          <div class="bc-tabs"><div class="bc-tab on">CHAT</div><div class="bc-tab">SESSIONS</div><div class="bc-tab">SETTINGS</div></div>
           <div class="bc-body"><div class="bc-scroll">
-            <div class="msg u">add a retry button to the upload form</div>
-            <div class="msg a">On it — I'll add a retry button to the upload form and wire it to the existing upload handler.</div>
+            <div class="u">add a retry button to the upload form</div>
+            <div class="a"><div class="who">OPENCODE</div>On it — I'll add a retry button to the upload form and wire it to the existing upload handler.</div>
             <div class="perm">
-              <div class="perm-k">Permission needed</div>
+              <div class="perm-k">PERMISSION NEEDED</div>
               <div class="perm-t">Edit file</div>
               <div class="perm-d"><code>src/components/UploadForm.tsx</code></div>
-              <div class="perm-btns"><button class="allow">Approve</button><button class="deny">Deny</button></div>
+              <div class="perm-btns"><button class="allow">APPROVE</button><button class="deny">DENY</button></div>
             </div>
-            <div class="msg a live">Now updating the handler so a failed upload resets to an idle state before<span class="live-caret">▍</span></div>
+            <div class="a live"><div class="who">OPENCODE · LIVE</div>Now updating the handler so a failed upload resets to idle state before<span class="caret">▍</span></div>
           </div></div>
-          <div class="composer"><div class="box">Message opencode…</div><div class="sendbtn stop">■</div></div>
+          <div class="composer"><div class="box">message opencode…</div><div class="sendbtn stop">■</div></div>
         </div>
       </div></div>
-      <div class="caption"><b>Chat.</b> Your message right, replies left, amber permission card default-deny, live streaming tail, ■ stops the run.</div>
+      <div class="caption"><b>Chat.</b> Outlined user msg, plain replies, amber-bordered permission card, live tail marked by an amber rule, ■ stops the run.</div>
     </div>
 
     <!-- FRAME 2: SESSIONS -->
@@ -164,21 +154,19 @@
       <div class="phone"><div class="screen"><div class="notch"></div>
         <div class="bc">
           <div class="bc-head">
-            <div class="bc-logo">ϟ</div><div class="bc-name">bcode</div>
-            <div class="bc-dot"></div><div class="bc-status">online</div>
+            <div class="bc-row1"><div class="bc-mark">ϟ</div><div class="bc-name">BCODE</div><div class="bc-ver">v0.1</div></div>
+            <div class="bc-status"><div class="bc-dot"></div>ONLINE — 100.121.188.113</div>
           </div>
-          <div class="bc-tabs">
-            <div class="bc-tab">Chat</div><div class="bc-tab on">Sessions</div><div class="bc-tab">Settings</div>
-          </div>
+          <div class="bc-tabs"><div class="bc-tab">CHAT</div><div class="bc-tab on">SESSIONS</div><div class="bc-tab">SETTINGS</div></div>
           <div class="bc-body"><div class="bc-scroll">
-            <div class="newsess">＋ New session</div>
-            <div class="sess active"><div><div class="t">upload form retry</div><div class="m">main · active now</div></div><div class="del">⌦</div></div>
-            <div class="sess"><div><div class="t">vectorizer deploy debug</div><div class="m">main · 2h ago</div></div><div class="del">⌦</div></div>
-            <div class="sess"><div><div class="t">nursery pdf parity</div><div class="m">pilotv4 · yesterday</div></div><div class="del">⌦</div></div>
+            <div class="newsess">+ NEW SESSION</div>
+            <div class="sess active"><div class="bar"></div><div><div class="t">upload form retry</div><div class="m">main · active now</div></div><div class="tag">ACTIVE</div></div>
+            <div class="sess"><div class="bar"></div><div><div class="t">vectorizer deploy debug</div><div class="m">main · 2h ago</div></div><div class="del">⌦</div></div>
+            <div class="sess"><div class="bar"></div><div><div class="t">nursery pdf parity</div><div class="m">pilotv4 · yesterday</div></div><div class="del">⌦</div></div>
           </div></div>
         </div>
       </div></div>
-      <div class="caption"><b>Sessions.</b> New session up top, active one glows cyan, ⌦ deletes. Tap one to open it in Chat.</div>
+      <div class="caption"><b>Sessions.</b> Divider list, active row gets the amber bar + tag. Tap to open in Chat.</div>
     </div>
 
     <!-- FRAME 3: SETTINGS -->
@@ -186,22 +174,21 @@
       <div class="phone"><div class="screen"><div class="notch"></div>
         <div class="bc">
           <div class="bc-head">
-            <div class="bc-logo">ϟ</div><div class="bc-name">bcode</div>
-            <div class="bc-dot" style="background:#e8b93e;box-shadow:0 0 8px #e8b93e"></div><div class="bc-status">connecting…</div>
+            <div class="bc-row1"><div class="bc-mark">ϟ</div><div class="bc-name">BCODE</div><div class="bc-ver">v0.1</div></div>
+            <div class="bc-status"><div class="bc-dot" style="background:var(--amber);box-shadow:0 0 7px var(--amber)"></div>CONNECTING…</div>
           </div>
-          <div class="bc-tabs">
-            <div class="bc-tab">Chat</div><div class="bc-tab">Sessions</div><div class="bc-tab on">Settings</div>
-          </div>
+          <div class="bc-tabs"><div class="bc-tab">CHAT</div><div class="bc-tab">SESSIONS</div><div class="bc-tab on">SETTINGS</div></div>
           <div class="bc-body"><div class="bc-scroll">
-            <div class="fld"><label>Server URL</label><div class="in">http://100.121.188.113:4096</div></div>
-            <div class="fld"><label>Username (if basic auth)</label><div class="in">opencode</div></div>
-            <div class="fld"><label>Password</label><div class="in">••••••••</div></div>
-            <div class="save">Save &amp; connect</div>
-            <div class="note">Stored in Keychain / Keystore via secure storage. Never leaves the phone except as the API password.</div>
+            <div class="fld"><label>SERVER URL</label><div class="in">http://100.121.188.113:4096</div></div>
+            <div class="fld"><label>USERNAME</label><div class="in">opencode</div></div>
+            <div class="fld"><label>PASSWORD</label><div class="in">••••••••</div></div>
+            <div class="errline">! last attempt refused — check URL</div>
+            <div class="save">SAVE &amp; CONNECT</div>
+            <div class="note">Secrets stay in Keychain / Keystore. Never leave the phone except as the API password.</div>
           </div></div>
         </div>
       </div></div>
-      <div class="caption"><b>Settings.</b> Tailscale URL + credentials, saved to Keychain/Keystore. Status dot follows the connection.</div>
+      <div class="caption"><b>Settings.</b> Sharp mono inputs, text-only error line, one solid amber action. Status dot follows the connection.</div>
     </div>
 
   </div>

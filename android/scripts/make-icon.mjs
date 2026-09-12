@@ -8,9 +8,9 @@ import { fileURLToPath } from "node:url";
 const W = 128;
 const H = 128;
 
-const BG = [5, 7, 13];
-const CYAN = [62, 230, 255];
-const VIOLET = [139, 124, 255];
+const BG = [6, 6, 6];
+const AMBER = [232, 185, 62];
+const AMBER_DK = [150, 115, 30];
 
 // Bolt polygon (x,y), drawn in a 128 box.
 const BOLT = [
@@ -32,20 +32,20 @@ let o = 0;
 for (let y = 0; y < H; y++) {
   raw[o++] = 0; // filter byte
   for (let x = 0; x < W; x++) {
-    // faint violet ring glow near edges
+    // faint amber ring glow near edges
     const edge = Math.min(x, y, W - 1 - x, H - 1 - y);
     let r = BG[0], g = BG[1], b = BG[2];
     if (edge < 3) {
       const t = (3 - edge) / 3;
-      r += (VIOLET[0] - r) * 0.25 * t;
-      g += (VIOLET[1] - g) * 0.25 * t;
-      b += (VIOLET[2] - b) * 0.25 * t;
+      r += (AMBER[0] - r) * 0.25 * t;
+      g += (AMBER[1] - g) * 0.25 * t;
+      b += (AMBER[2] - b) * 0.25 * t;
     }
     if (insideBolt(x, y)) {
-      const t = y / H; // cyan top -> violet bottom
-      r = CYAN[0] + (VIOLET[0] - CYAN[0]) * t;
-      g = CYAN[1] + (VIOLET[1] - CYAN[1]) * t;
-      b = CYAN[2] + (VIOLET[2] - CYAN[2]) * t;
+      const t = y / H; // amber top -> deep amber bottom
+      r = AMBER[0] + (AMBER_DK[0] - AMBER[0]) * t;
+      g = AMBER[1] + (AMBER_DK[1] - AMBER[1]) * t;
+      b = AMBER[2] + (AMBER_DK[2] - AMBER[2]) * t;
     }
     raw[o++] = r;
     raw[o++] = g;
