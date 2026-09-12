@@ -24,12 +24,17 @@ monospace, sharp edges. Change a value here → change it in both
   1.5–2px tracking for labels/tabs/status
 - radius ..... 0–2px everywhere. Sharp. Pills and gradient text
   are banned.
-- glass ...... header + tab strip: white 4.5% top sheen over
-  rgba(12,12,13,.72) + backdrop blur(16px) saturate(1.3),
-  inset 1px top highlight, faint amber edge (18%) + ambient
-  drop 0 10px 32px amber 9%. Permission card: amber-tinted
-  gradient (amber 14% → card 85%) + blur(12px), amber border
-  75%, halo 0 0 36px amber 18%. Screen sits under a faint top
-  ambient: radial amber 11% fading by 60%. Blur is progressive
-  enhancement — flat rgba fallback on old WebViews.
+- glass ...... header: diagonal white fill (135deg, 12%→2%)
+  + 115deg sheen streak + rgba(12,12,13,.6) over blur(20px)
+  saturate(1.6); top inner highlight white 22%, amber bottom
+  edge 35%, shadow 0 8px 32px black 45% + amber glow.
+  Permission card (hero, like the ref debit card): triple fill
+  (white sheen 12% streak + white 14%→3% + amber 20%→6%),
+  amber luminous border 55%, radius 14px, inner top white 35%,
+  deep shadow + amber halo 0 0 28px 22%. Text on glass gets
+  0 1px 4px black shadow. Screen ambient: amber orb 24%
+  top-left (light source) + 9% bottom-right + whisper white 5%
+  top-right; content layer transparent so orbs show through.
+  Composer: dark glass rgba(10,10,11,.55) + blur(24px).
+  Blur is progressive enhancement — flat rgba on old WebViews.
   (Flutter: BackdropFilter + same tokens.)
