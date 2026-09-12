@@ -6,8 +6,9 @@ import { tool } from "@opencode-ai/plugin"
  *
  * Philosophy (from acode-ai-agent): phone is a thin approval UI.
  * Engine stays here. This plugin only adds:
- *  1. `bcode_pair` tool — short pairing code shown on desktop, typed into
- *     the phone so raw passwords aren't pasted around.
+ *  1. `bcode_pair` / `bcode_pair_redeem` / `bcode_pair_list` — short
+ *     pairing codes shown on desktop, typed into the phone so raw
+ *     passwords aren't pasted around. Single-use, 10 min TTL.
  *  2. `bcode_notify` tool — queue a short note the phone shows
  *     (turn done, needs approval). v0.2 forwards to a push relay.
  *  3. `permission.ask` hook — v0.1 observes (logs for the phone to surface
@@ -23,6 +24,12 @@ function newCode(): string {
   return Math.floor(100000 + Math.random() * 900000).toString()
 }
 
+function pruneExpired(now = Date.now()): void {
+  for (const [code, p] of pairings) {
+    if (now - p.createdAt > PAIR_TTL_MS) pairings.delete(code)
+  }
+}
+
 export const BcodePlugin: Plugin = async (_ctx, options) => {
   const opts = (options ?? {}) as { notifyUrl?: string }
 
@@ -34,9 +41,36 @@ export const BcodePlugin: Plugin = async (_ctx, options) => {
           label: tool.schema.string(),
         },
         async execute(args) {
+          pruneExpired()
           const code = newCode()
           pairings.set(code, { code, createdAt: Date.now(), label: args.label })
           return `bcode pairing code for '${args.label}': ${code}. Valid 10 min. Enter it in the phone app along with the server URL.`
+        },
+      }),
+
+      bcode_pair_redeem: tool({
+        description: "Verify + consume a bcode phone pairing code (single-use, 10 min TTL). Returns the device label on success.",
+        args: {
+          code: tool.schema.string(),
+        },
+        async execute(args) {
+          pruneExpired()
+          const found = pairings.get(args.code.trim())
+          if (!found) return "invalid or expired pairing code"
+          pairings.delete(args.code.trim())
+          return `paired: '${found.label}' (code accepted, single-use consumed)`
+        },
+      }),
+
+      bcode_pair_list: tool({
+        description: "List pending (unredeemed, unexpired) bcode pairing codes",
+        args: {},
+        async execute() {
+          pruneExpired()
+          if (pairings.size === 0) return "no pending pairing codes"
+          return [...pairings.values()]
+            .map((p) => `'${p.label}': ${p.code} (expires in ${Math.max(0, Math.round((PAIR_TTL_MS - (Date.now() - p.createdAt)) / 1000))}s)`)
+            .join("\n")
         },
       }),
 
