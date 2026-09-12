@@ -24,3 +24,12 @@ monospace, sharp edges. Change a value here → change it in both
   1.5–2px tracking for labels/tabs/status
 - radius ..... 0–2px everywhere. Sharp. Pills and gradient text
   are banned.
+- glass ...... header + tab strip: white 4.5% top sheen over
+  rgba(12,12,13,.72) + backdrop blur(16px) saturate(1.3),
+  inset 1px top highlight, faint amber edge (18%) + ambient
+  drop 0 10px 32px amber 9%. Permission card: amber-tinted
+  gradient (amber 14% → card 85%) + blur(12px), amber border
+  75%, halo 0 0 36px amber 18%. Screen sits under a faint top
+  ambient: radial amber 11% fading by 60%. Blur is progressive
+  enhancement — flat rgba fallback on old WebViews.
+  (Flutter: BackdropFilter + same tokens.)

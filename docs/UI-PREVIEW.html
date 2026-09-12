@@ -32,7 +32,10 @@
     box-shadow: 0 30px 80px rgba(0,0,0,.6);
   }
   .screen {
-    width: 100%; height: 100%; background: var(--bg); border-radius: 32px; overflow: hidden;
+    width: 100%; height: 100%; border-radius: 32px; overflow: hidden;
+    background:
+      radial-gradient(140% 55% at 50% -10%, rgba(232,185,62,.18), transparent 62%),
+      var(--bg);
     display: flex; flex-direction: column; position: relative;
   }
   .notch {
@@ -43,7 +46,15 @@
   .caption b { color: var(--txt); }
   /* ---- bcode v2 ---- */
   .bc { display: flex; flex-direction: column; height: 100%; font-size: 13px; }
-  .bc-head { padding: 46px 14px 10px; background: var(--surface); border-bottom: 1px solid var(--line); }
+  .bc-head { padding: 46px 14px 10px;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,0) 55%),
+      rgba(12,12,13,.72);
+    backdrop-filter: blur(16px) saturate(1.3);
+    border-bottom: 1px solid var(--line);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.09),
+      0 1px 0 rgba(232,185,62,.3), 0 12px 36px rgba(232,185,62,.14);
+    position: relative; z-index: 2; }
   .bc-row1 { display: flex; align-items: center; gap: 9px; }
   .bc-mark {
     width: 22px; height: 22px; background: var(--amber); color: #000;
@@ -55,7 +66,9 @@
   .bc-status { display: flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 11px; letter-spacing: 1.5px; color: var(--mut); }
   .bc-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 7px var(--ok); }
   .bc-dot.busy { background: var(--amber); box-shadow: 0 0 7px var(--amber); }
-  .bc-tabs { display: flex; gap: 18px; padding: 12px 14px 0; border-bottom: 1px solid var(--line); }
+  .bc-tabs{display:flex;gap:18px;padding:12px 14px 0;
+    background:rgba(12,12,13,.72);backdrop-filter:blur(16px) saturate(1.3);
+    border-bottom:1px solid var(--line);position:relative;z-index:2}
   .bc-tab {
     padding: 0 1px 9px; font-size: 11.5px; font-weight: 700; letter-spacing: 1.5px;
     color: var(--mut); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px;
@@ -72,7 +85,12 @@
   .a.live { border-left: 2px solid var(--amber); padding-left: 10px; }
   .caret { display: inline-block; width: 8px; animation: blink 1s steps(1) infinite; color: var(--amber); }
   @keyframes blink { 50% { opacity: 0; } }
-  .perm { align-self: flex-start; width: 100%; background: var(--card); border: 1px solid var(--amber); padding: 11px 12px; }
+  .perm { align-self: flex-start; width: 100%; padding: 11px 12px;
+    border: 1px solid rgba(232,185,62,.85);
+    background: linear-gradient(180deg, rgba(232,185,62,.18), rgba(17,17,19,.85));
+    backdrop-filter: blur(12px) saturate(1.2);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.1),
+      0 0 14px rgba(232,185,62,.35), 0 0 44px rgba(232,185,62,.2); }
   .perm-k { font-size: 10.5px; color: var(--amber); font-weight: 700; letter-spacing: 2px; }
   .perm-t { font-weight: 700; margin: 5px 0 2px; }
   .perm-d { color: var(--mut); font-size: 12px; }
