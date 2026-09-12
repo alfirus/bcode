@@ -4,7 +4,7 @@
 
 - [x] `plugin/`: pairing command + permission-policy hook, published as `bcode-remote`
   (code complete + smoke-tested 2026-09-12: pair → list → redeem →
-  double-redeem rejected; npm publish still to do)
+  double-redeem rejected; published to npm as `bcode-remote@0.1.0` 2026-09-12)
 - [ ] `ios/`: server config (Keychain) → session list → chat with SSE → approve/deny → abort
 - [x] `android/` (Acode client): deleted 2026-09-12 — Flutter is the one client for iOS+Android
 - [x] Live smoke test vs local `opencode serve` (done 2026-09-12, v1.18.29:
