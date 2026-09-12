@@ -6,7 +6,7 @@
   (code complete + smoke-tested 2026-09-12: pair → list → redeem →
   double-redeem rejected; npm publish still to do)
 - [ ] `ios/`: server config (Keychain) → session list → chat with SSE → approve/deny → abort
-- [ ] `android/`: Acode plugin, same screens as webview UI, `plugin.zip` build
+- [x] `android/` (Acode client): deleted 2026-09-12 — Flutter is the one client for iOS+Android
 - [x] Live smoke test vs local `opencode serve` (done 2026-09-12, v1.18.29:
   health/session/prompt_async/status/abort verified; all 4 bcode tools in
   `/experimental/tool/ids`; pair→redeem→list + permission reject over live
