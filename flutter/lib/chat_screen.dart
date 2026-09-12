@@ -144,7 +144,7 @@ class _BcodeScreenState extends State<BcodeScreen> {
                   const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
               decoration: BoxDecoration(
                 color: active ? BcodeColors.cyanDim : const Color(0x00000000),
-                borderRadius: BorderRadius.circular(BcodeRadii.pill),
+                borderRadius: BcodeRadii.pill,
                 border: Border.all(
                     color: active
                         ? BcodeColors.cyan
@@ -210,7 +210,7 @@ class _BcodeScreenState extends State<BcodeScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             decoration: BoxDecoration(
               color: user ? BcodeColors.cyan : BcodeColors.card,
-              borderRadius: BorderRadius.circular(BcodeRadii.card),
+              borderRadius: BcodeRadii.card,
               border: user
                   ? null
                   : Border.all(color: BcodeColors.hairline),
@@ -240,7 +240,7 @@ class _BcodeScreenState extends State<BcodeScreen> {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: BcodeColors.card,
-        borderRadius: BorderRadius.circular(BcodeRadii.card),
+        borderRadius: BcodeRadii.card,
         border: Border.all(color: BcodeColors.warn),
       ),
       child: Column(
@@ -309,7 +309,7 @@ class _BcodeScreenState extends State<BcodeScreen> {
                   horizontal: 12, vertical: 10),
               decoration: BoxDecoration(
                 color: BcodeColors.surface,
-                borderRadius: BorderRadius.circular(BcodeRadii.input),
+                borderRadius: BcodeRadii.input,
                 border: Border.all(color: BcodeColors.hairline),
               ),
               child: EditableText(
@@ -488,8 +488,7 @@ class _BcodeScreenState extends State<BcodeScreen> {
                 horizontal: 12, vertical: 11),
             decoration: BoxDecoration(
               color: BcodeColors.surface,
-              borderRadius:
-                  BorderRadius.circular(BcodeRadii.input),
+              borderRadius: BcodeRadii.input,
               border: Border.all(color: BcodeColors.hairline),
             ),
             child: EditableText(

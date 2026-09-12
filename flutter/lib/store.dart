@@ -40,7 +40,8 @@ class BcodeStore extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String> password() => _storage.read(key: _kPass) ?? Future.value('');
+  Future<String> password() async =>
+      (await _storage.read(key: _kPass)) ?? '';
 
   Future<void> saveServer(String url, String user, String pass) async {
     final clean = url.trim().replaceAll(RegExp(r'/+$'), '');
