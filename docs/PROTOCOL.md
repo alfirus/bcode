@@ -21,8 +21,13 @@ Recommended: bind Tailscale IP only, connect phone over Tailnet. No public ports
 - `GET /session/:id/message?limit=` → history
 - `POST /session/:id/message` `{ model?, agent?, parts }` → send + wait for reply
 - `POST /session/:id/prompt_async` (same body) → send, stream via SSE instead
-- `POST /session/:id/abort` → stop running turn
-- `POST /session/:id/permissions/:permissionID` `{ response: "allow" | "reject" }` → approve/deny
+- `POST /session/:id/abort` → stop running turn (returns `true`, idempotent)
+- `GET /permission` → global pending queue (poll this; `[]` when empty).
+  Item: `{id, sessionID, permission, patterns, metadata, tool:{messageID, callID}}`
+- `POST /permission/:requestID/reply` `{reply:"once"|"always"|"reject", message?}` → `true`
+  (session-scoped twins: `GET /api/session/:id/permission`,
+  `POST /api/session/:id/permission/:requestID/reply` — always use the `/api`
+  prefix; the non-`/api` path serves the web UI, not JSON)
 - `GET /event` (per-session SSE) + `GET /global/event` (server SSE) → live updates
 
 Parts model (send text): `{ parts: [{ type: "text", text: "..." }] }`.
