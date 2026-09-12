@@ -1,0 +1,19 @@
+{
+  "name": "bcode-remote",
+  "version": "0.1.0",
+  "description": "bcode: use OpenCode remotely from your phone (pairing + permission policy + notify hook)",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "peerDependencies": {
+    "@opencode-ai/plugin": ">=1.14.0"
+  },
+  "devDependencies": {
+    "@opencode-ai/plugin": "1.14.29",
+    "typescript": "^5.5.0"
+  },
+  "license": "MIT"
+}

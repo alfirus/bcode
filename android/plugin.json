@@ -1,0 +1,10 @@
+{
+  "name": "bcode",
+  "displayName": "bcode — remote OpenCode",
+  "description": "Use OpenCode on your desktop/server from Acode. Sessions, chat over SSE, approve/deny permissions.",
+  "version": "0.1.0",
+  "author": "alfirus",
+  "main": "dist/main.js",
+  "icon": "icon.png",
+  "license": "MIT"
+}

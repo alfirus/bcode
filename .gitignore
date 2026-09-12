@@ -1,0 +1,13 @@
+node_modules/
+dist/
+plugin.zip
+*.zip
+.DS_Store
+build/
+*.xcuserdata/
+DerivedData/
+.swiftpm/
+.gradle/
+local.properties
+.env
+OPENCODE_SERVER_PASSWORD

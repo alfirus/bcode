@@ -1,0 +1,15 @@
+{
+  "name": "bcode-acode-client",
+  "version": "0.1.0",
+  "description": "bcode Android client as an Acode plugin (WebView-safe, HTTP SSE only)",
+  "type": "module",
+  "scripts": {
+    "build": "esbuild src/main.js --bundle --format=iife --target=chrome90 --outfile=dist/main.js",
+    "dev": "esbuild src/main.js --bundle --format=iife --target=chrome90 --outfile=dist/main.js --watch --servedir=. --serve=3000"
+  },
+  "devDependencies": {
+    "acode-plugin-types": "latest",
+    "esbuild": "^0.21.0"
+  },
+  "license": "MIT"
+}
