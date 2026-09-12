@@ -173,7 +173,7 @@ class BcodeStore extends ChangeNotifier {
     final id = activeSessionId;
     if (c == null || id == null) return;
     try {
-      await c.decidePermission(id, p.id, allow);
+      await c.decidePermission(p.id, allow ? 'once' : 'reject');
       permissions = permissions.where((x) => x.id != p.id).toList();
     } catch (e) {
       error = '$e';

@@ -36,7 +36,7 @@ Parts model (send text): `{ parts: [{ type: "text", text: "..." }] }`.
 
 HTTP basic auth. Username defaults to `opencode`, override with
 `OPENCODE_SERVER_USERNAME`. Password from `OPENCODE_SERVER_PASSWORD`.
-Clients store both in secure storage (iOS Keychain / Acode secrets).
+Clients store both in secure storage (iOS Keychain / Android Keystore).
 
 ## Rules for clients
 

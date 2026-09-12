@@ -10,9 +10,10 @@ Use OpenCode running on your desktop/server from iOS or Android.
 ## Repo layout
 
 - `plugin/` — OpenCode server-side plugin (`bcode-remote`): device pairing, permission queue, push hook
-- `ios/` — native iOS client (SwiftUI, URLSession, SSE streaming)
-- `android/` — Acode plugin client (JS, WebView-safe, HTTP SSE only — same transport as `acode-ai-agent`)
-- `docs/` — protocol, Acode lessons, roadmap
+- `flutter/` — the one client for iOS + Android (widgets-only, no Material)
+- `docs/` — protocol, design tokens + UI mockup, roadmap
+
+(The old `android/` Acode client was deleted 2026-09-12 — Flutter replaces it.)
 
 ## Quick start (MVP)
 

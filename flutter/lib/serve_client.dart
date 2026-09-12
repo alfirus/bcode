@@ -1,6 +1,5 @@
-// bcode serve client — mirrors android/src/api.ts. http + SSE only.
-// Shapes pinned against live /doc, see docs/PROTOCOL.md. Defensive reads:
-// several key spellings, null-safe, never throws on unknown JSON.
+// bcode serve client — shapes pinned to docs/PROTOCOL.md, verified against
+// live `opencode serve` v1.18.29. http + SSE only, no sockets.
 import 'dart:async';
 import 'dart:convert';
 
@@ -92,18 +91,24 @@ class ServeClient {
         .toList();
   }
 
+  /// Parts model — verified against live serve, see docs/PROTOCOL.md.
+  Map<String, dynamic> _textBody(String text) => {
+        'parts': [
+          {'type': 'text', 'text': text}
+        ]
+      };
+
   Future<void> sendMessage(String sessionId, String text) =>
-      _post('/session/$sessionId/message', {'text': text, 'content': text});
+      _post('/session/$sessionId/message', _textBody(text));
 
   Future<void> promptAsync(String sessionId, String text) =>
-      _post('/session/$sessionId/prompt_async', {'text': text, 'content': text});
+      _post('/session/$sessionId/prompt_async', _textBody(text));
 
   Future<void> abort(String sessionId) => _post('/session/$sessionId/abort');
 
-  Future<void> decidePermission(
-          String sessionId, String permissionId, bool allow) =>
-      _post('/session/$sessionId/permissions/$permissionId',
-          {'allow': allow, 'approved': allow, 'decision': allow ? 'allow' : 'deny'});
+  /// Global permission queue — reply is once | always | reject.
+  Future<void> decidePermission(String requestId, String reply) =>
+      _post('/permission/$requestId/reply', {'reply': reply});
 
   /// Live text tail for a session. Emits appended text chunks.
   Stream<String> streamSessionText(String sessionId) {

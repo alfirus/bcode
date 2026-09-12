@@ -16,6 +16,16 @@ class BcodeColors {
   static const ok = Color(0xFF34D399);
   static const bad = Color(0xFFF87171);
   static const onAccent = Color(0xFF000000);
+
+  // Compat aliases — old scaffold used cyan/violet names; everything maps to
+  // the single amber accent (mono-first, amber-second, per docs/DESIGN.md).
+  static const cyan = accent;
+  static const cyanDim = Color(0x1FE8B93E);
+  static const violet = accent;
+  static const warn = accent;
+  static const muted = faint;
+  static const text = ink;
+  static const danger = bad;
 }
 
 /// Monospace stack per platform. Pass to TextStyle(fontFamily: ...).
@@ -30,10 +40,26 @@ class BcodeRadii {
   BcodeRadii._();
   static const sharp = Radius.zero;
   static const card = BorderRadius.all(Radius.circular(2));
+  static const pill = BorderRadius.all(Radius.circular(2));
+  static const input = BorderRadius.all(Radius.circular(2));
 }
 
 class BcodeSpace {
   BcodeSpace._();
   static const pad = 14.0;
   static const gap = 12.0;
+}
+
+/// Text styles — message/input are mono-first, headers plain.
+class BcodeText {
+  BcodeText._();
+  static const title = TextStyle(
+      fontSize: 16, fontWeight: FontWeight.w700, color: BcodeColors.ink);
+  static const message = TextStyle(
+      fontSize: 14, color: BcodeColors.ink, fontFamily: 'JetBrains Mono');
+  static const input = TextStyle(
+      fontSize: 14, color: BcodeColors.ink, fontFamily: 'JetBrains Mono');
+  static const tab =
+      TextStyle(fontSize: 13, fontWeight: FontWeight.w600);
+  static const meta = TextStyle(fontSize: 12, color: BcodeColors.dim);
 }

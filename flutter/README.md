@@ -2,8 +2,8 @@
 
 Our own chat UI for talking to `opencode serve` on your machine.
 **Widgets only — no Material anywhere.** No `Scaffold`, no `AppBar`, no
-`TextField`, no `InkWell`. Same minimalist futuristic theme as the Acode
-plugin; tokens shared via `docs/DESIGN.md`.
+`TextField`, no `InkWell`. Minimalist futuristic theme, tokens in
+`docs/DESIGN.md`.
 
 ## Run it
 
@@ -23,7 +23,7 @@ flutter run -d <your-phone>
 - `lib/chat_screen.dart` — header, tabs, chat, sessions, settings (`EditableText`, `GestureDetector`, custom containers)
 - `lib/serve_client.dart` — `serve` client (`package:http` + SSE stream, shapes per `docs/PROTOCOL.md`)
 - `lib/store.dart` — state (`ChangeNotifier`) + server config in `flutter_secure_storage` (Keychain / Keystore)
-- `lib/theme.dart` — `BcodeColors` / `BcodeText`, mirrors `android/src/bcode.css`
+- `lib/theme.dart` — `BcodeColors` / `BcodeText` per `docs/DESIGN.md`
 
 ## Rules
 

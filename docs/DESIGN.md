@@ -1,8 +1,7 @@
-# bcode design tokens v2 (shared: Acode CSS ↔ Flutter)
+# bcode design tokens v2 (Flutter only — the Acode client was deleted 2026-09-12)
 
 The AerosGeotech language: monochrome + one amber accent, strict
-monospace, sharp edges. Change a value here → change it in both
-`android/src/bcode.css` (`--bc-*`) and `flutter/lib/theme.dart`.
+monospace, sharp edges. Tokens live in `flutter/lib/theme.dart`.
 
 - bg ......... #060606  app background, flat (no gradients)
 - surface .... #0c0c0d  header / tab strip
