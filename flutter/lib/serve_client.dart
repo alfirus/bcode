@@ -30,6 +30,10 @@ class ServeClient {
   final String username;
   final String password;
 
+  /// Hung serve must never freeze the UI — every unary call gets a timeout.
+  /// (The SSE stream is long-lived by design and is exempt.)
+  static const _kTimeout = Duration(seconds: 15);
+
   Map<String, String> get _headers {
     final h = {'Content-Type': 'application/json'};
     if (password.isNotEmpty) {
@@ -43,14 +47,16 @@ class ServeClient {
       Uri.parse('${baseUrl.replaceAll(RegExp(r'/+$'), '')}$path');
 
   Future<dynamic> _get(String path) async {
-    final r = await http.get(_u(path), headers: _headers);
+    final r =
+        await http.get(_u(path), headers: _headers).timeout(_kTimeout);
     if (r.statusCode >= 400) throw StateError('GET $path → ${r.statusCode}');
     return jsonDecode(r.body);
   }
 
   Future<dynamic> _post(String path, [Map<String, dynamic>? body]) async {
-    final r = await http.post(_u(path),
-        headers: _headers, body: jsonEncode(body ?? {}));
+    final r = await http
+        .post(_u(path), headers: _headers, body: jsonEncode(body ?? {}))
+        .timeout(_kTimeout);
     if (r.statusCode >= 400) throw StateError('POST $path → ${r.statusCode}');
     if (r.body.isEmpty) return null;
     return jsonDecode(r.body);
@@ -73,7 +79,7 @@ class ServeClient {
     try {
       final req = http.Request('DELETE', _u('/session/$id'));
       req.headers.addAll(_headers);
-      final r = await c.send(req);
+      final r = await c.send(req).timeout(_kTimeout);
       await r.stream.drain();
       if (r.statusCode >= 400) throw StateError('DELETE → ${r.statusCode}');
     } finally {
@@ -82,7 +88,7 @@ class ServeClient {
   }
 
   Future<List<ChatMessage>> listMessages(String sessionId) async {
-    final raw = await _get('/session/$sessionId/message');
+    final raw = await _get('/session/$sessionId/message?limit=100');
     final items =
         raw is List ? raw : _list(_asMap(raw) ?? {}, ['messages', 'items', 'data']);
     return items
@@ -101,17 +107,33 @@ class ServeClient {
   Future<void> sendMessage(String sessionId, String text) =>
       _post('/session/$sessionId/message', _textBody(text));
 
+  /// Primary send path on mobile (PROTOCOL rule 5): returns immediately,
+  /// the turn streams back over SSE instead of holding one HTTP call open.
   Future<void> promptAsync(String sessionId, String text) =>
       _post('/session/$sessionId/prompt_async', _textBody(text));
 
   Future<void> abort(String sessionId) => _post('/session/$sessionId/abort');
 
-  /// Global permission queue — reply is once | always | reject.
+  /// Global permission queue — poll this; `[]` when empty.
+  Future<List<PermissionReq>> listPermissions() async {
+    final raw = await _get('/permission');
+    final items =
+        raw is List ? raw : _list(_asMap(raw) ?? {}, ['permissions', 'items', 'data']);
+    return items
+        .whereType<Map<String, dynamic>>()
+        .map(PermissionReq.fromJson)
+        .toList();
+  }
+
+  /// Global permission reply — `once` | `always` | `reject`.
   Future<void> decidePermission(String requestId, String reply) =>
       _post('/permission/$requestId/reply', {'reply': reply});
 
   /// Live text tail for a session. Emits appended text chunks.
-  Stream<String> streamSessionText(String sessionId) {
+  /// Calls [onIdle] when the server signals the turn ended (session.idle)
+  /// so the store can flip `sending` off and refresh — the stream itself
+  /// stays open until cancelled.
+  Stream<String> streamSessionText(String sessionId, {void Function()? onIdle}) {
     final ctl = StreamController<String>();
     final client = http.Client();
     () async {
@@ -158,6 +180,13 @@ class ServeClient {
               continue;
             }
             final kind = '${event ?? ''} ${_str(m, ['type', 'event', 'kind'])}';
+            if (kind.contains('idle') || kind.contains('done')) {
+              try {
+                onIdle?.call();
+              } catch (_) {}
+              event = null;
+              continue;
+            }
             if (kind.contains('message') || kind.contains('text') || kind.contains('part')) {
               final chunk = _str(m, ['text', 'delta', 'content', 'chunk']);
               if (chunk.isNotEmpty) ctl.add(chunk);
@@ -211,11 +240,10 @@ class ChatMessage {
         : role.contains('perm')
             ? 'permission'
             : 'assistant';
-    final info = _asMap(m['info']);
-    final text = _str(m, ['text', 'content', 'body', 'message']) +
-        (info != null ? _str(info, ['text', 'content']) : '');
+    // Parts are authoritative when present — serve echoes the same text at
+    // top level on some versions, so never concatenate both (double render).
     final parts = _list(m, ['parts', 'content']);
-    final buf = StringBuffer(text);
+    final buf = StringBuffer();
     for (final p in parts) {
       final pm = _asMap(p);
       if (pm == null) continue;
@@ -225,10 +253,16 @@ class ChatMessage {
         buf.write(t);
       }
     }
+    var text = buf.toString();
+    if (text.isEmpty) {
+      final info = _asMap(m['info']);
+      text = _str(m, ['text', 'content', 'body', 'message']) +
+          (info != null ? _str(info, ['text', 'content']) : '');
+    }
     return ChatMessage(
       id: _str(m, ['id', 'ID', 'messageId']),
       role: norm,
-      text: buf.toString(),
+      text: text,
     );
   }
 }
@@ -238,4 +272,23 @@ class PermissionReq {
   final String id;
   final String title;
   final String detail;
+
+  /// Serve item: `{id, sessionID, permission, patterns, metadata,
+  /// tool:{messageID, callID}}` — see docs/PROTOCOL.md.
+  factory PermissionReq.fromJson(Map<String, dynamic> m) {
+    final id = _str(m, ['id', 'requestID', 'requestId']);
+    final perm = _str(m, ['permission', 'action', 'title']);
+    final pats =
+        _list(m, ['patterns']).whereType<String>().where((s) => s.isNotEmpty).toList();
+    final title = pats.isEmpty
+        ? (perm.isEmpty ? 'Permission request' : perm)
+        : '${perm.isEmpty ? 'allow' : perm}: ${pats.join(', ')}';
+    final tool = _asMap(m['tool']);
+    final detail = [
+      _str(m, ['sessionID', 'sessionId', 'session_id']),
+      tool != null ? _str(tool, ['messageID', 'messageId', 'callID', 'callId']) : '',
+      _str(m, ['metadata']).isEmpty ? '' : _str(m, ['metadata']),
+    ].where((s) => s.isNotEmpty).join(' · ');
+    return PermissionReq(id: id, title: title, detail: detail);
+  }
 }

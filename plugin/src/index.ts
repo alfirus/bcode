@@ -1,5 +1,6 @@
 import type { Plugin } from "@opencode-ai/plugin"
 import { tool } from "@opencode-ai/plugin"
+import { randomInt } from "node:crypto"
 
 /**
  * bcode-remote — OpenCode server-side plugin, v0.1.
@@ -21,7 +22,7 @@ const pairings = new Map<string, StoredPairing>()
 const PAIR_TTL_MS = 10 * 60 * 1000
 
 function newCode(): string {
-  return Math.floor(100000 + Math.random() * 900000).toString()
+  return randomInt(100000, 1000000).toString()
 }
 
 function pruneExpired(now = Date.now()): void {

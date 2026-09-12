@@ -31,10 +31,13 @@ class _BcodeAppState extends State<BcodeApp> {
 
   @override
   Widget build(BuildContext context) {
-    return ColoredBox(
+    return WidgetsApp(
       color: BcodeColors.bg,
-      child: SafeArea(
-        child: BcodeScreen(store: _store),
+      builder: (_, __) => ColoredBox(
+        color: BcodeColors.bg,
+        child: SafeArea(
+          child: BcodeScreen(store: _store),
+        ),
       ),
     );
   }

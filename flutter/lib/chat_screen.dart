@@ -51,9 +51,9 @@ class _BcodeScreenState extends State<BcodeScreen> {
   Future<void> _ensureSettings() async {
     if (_settingsLoaded) return;
     _settingsLoaded = true;
-    _url.text = widget.store.serverUrl;
-    _user.text = widget.store.username;
-    _pass.text = await widget.store.password();
+    _url.text = await widget.store.serverUrl();
+    _user.text = await widget.store.serverUser();
+    _pass.text = await widget.store.serverPass();
   }
 
   @override
@@ -62,7 +62,6 @@ class _BcodeScreenState extends State<BcodeScreen> {
       animation: widget.store,
       builder: (_, __) {
         final s = widget.store;
-        if (tab == 2) _ensureSettings();
         return Column(
           children: [
             _header(s),
@@ -98,13 +97,9 @@ class _BcodeScreenState extends State<BcodeScreen> {
           Container(
             width: 30,
             height: 30,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(9),
-              gradient: const LinearGradient(
-                colors: [BcodeColors.cyan, BcodeColors.violet],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+            decoration: const BoxDecoration(
+              color: BcodeColors.accent,
+              borderRadius: BcodeRadii.card,
             ),
             alignment: Alignment.center,
             child: const Text('ϟ',
@@ -120,7 +115,7 @@ class _BcodeScreenState extends State<BcodeScreen> {
             width: 8,
             height: 8,
             decoration: BoxDecoration(
-                color: dot, borderRadius: BorderRadius.circular(4)),
+                color: dot, borderRadius: BcodeRadii.card),
           ),
           const SizedBox(width: 6),
           Text(s.status, style: BcodeText.meta),
@@ -137,7 +132,13 @@ class _BcodeScreenState extends State<BcodeScreen> {
         children: List.generate(labels.length, (i) {
           final active = tab == i;
           return GestureDetector(
-            onTap: () => setState(() => tab = i),
+            onTap: () async {
+              setState(() => tab = i);
+              if (i == 2) {
+                await _ensureSettings();
+                if (mounted) setState(() {});
+              }
+            },
             child: Container(
               margin: const EdgeInsets.only(right: 8),
               padding:
@@ -214,14 +215,6 @@ class _BcodeScreenState extends State<BcodeScreen> {
               border: user
                   ? null
                   : Border.all(color: BcodeColors.hairline),
-              boxShadow: user
-                  ? null
-                  : const [
-                      BoxShadow(
-                          color: Color(0x1F38E1FF),
-                          blurRadius: 18,
-                          offset: Offset(0, 2))
-                    ],
             ),
             child: Text(m.text,
                 style: BcodeText.message.copyWith(
@@ -274,7 +267,7 @@ class _BcodeScreenState extends State<BcodeScreen> {
             const EdgeInsets.symmetric(horizontal: 18, vertical: 9),
         decoration: BoxDecoration(
           color: allow ? BcodeColors.ok : const Color(0x00000000),
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BcodeRadii.card,
           border: Border.all(
               color: allow ? BcodeColors.ok : BcodeColors.danger),
         ),
@@ -338,7 +331,7 @@ class _BcodeScreenState extends State<BcodeScreen> {
               height: 44,
               decoration: BoxDecoration(
                 color: s.sending ? BcodeColors.danger : BcodeColors.cyan,
-                borderRadius: BorderRadius.circular(22),
+                borderRadius: BcodeRadii.card,
               ),
               alignment: Alignment.center,
               child: Text(s.sending ? '■' : '↑',
@@ -370,7 +363,7 @@ class _BcodeScreenState extends State<BcodeScreen> {
             padding: const EdgeInsets.symmetric(vertical: 11),
             decoration: BoxDecoration(
               color: BcodeColors.cyanDim,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BcodeRadii.card,
               border: Border.all(color: BcodeColors.cyan),
             ),
             alignment: Alignment.center,
@@ -399,7 +392,7 @@ class _BcodeScreenState extends State<BcodeScreen> {
                       color: sess.id == s.activeSessionId
                           ? BcodeColors.cyanDim
                           : BcodeColors.card,
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BcodeRadii.card,
                       border: Border.all(
                           color: sess.id == s.activeSessionId
                               ? BcodeColors.cyan
@@ -454,9 +447,9 @@ class _BcodeScreenState extends State<BcodeScreen> {
               s.saveServer(_url.text, _user.text, _pass.text),
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 13),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: BcodeColors.cyan,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BcodeRadii.card,
             ),
             alignment: Alignment.center,
             child: const Text('Save & connect',

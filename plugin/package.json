@@ -13,6 +13,7 @@
   },
   "devDependencies": {
     "@opencode-ai/plugin": "1.14.29",
+    "@types/node": "^22.20.2",
     "typescript": "^5.5.0"
   },
   "license": "MIT"
