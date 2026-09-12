@@ -11,3 +11,8 @@ DerivedData/
 local.properties
 .env
 OPENCODE_SERVER_PASSWORD
+# flutter
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.flutter_version.json
